@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -14,18 +14,61 @@
         android:id="@+id/mainLoadingTreesProgressBar"
         style="?android:attr/progressBarStyle"
         android:layout_width="match_parent"
-        android:layout_height="30dp" />
+        android:layout_height="30dp"
+        android:layout_centerHorizontal="true" />
 
     <TextView
         android:id="@+id/mainLoadingTreesTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_below="@id/mainLoadingTreesProgressBar"
+        android:layout_centerHorizontal="true"
         android:layout_gravity="center_horizontal"
+        android:layout_marginBottom="30dp"
         android:text="Loading available trees..." />
+
+    <TextView
+        android:id="@+id/mainSelectTreeTitleTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/mainLoadingTreesTextView"
+        android:layout_centerHorizontal="true"
+        android:text="Select the tree" />
 
     <Spinner
         android:id="@+id/mainTreesListSpinner"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:layout_below="@id/mainSelectTreeTitleTextView"
+        android:layout_marginBottom="30dp"
+        android:background="@drawable/rounded_spinner" />
 
-</LinearLayout>
+    <Button
+        android:id="@+id/mainSelectQSFileButton"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_below="@id/mainTreesListSpinner"
+        android:background="@color/white"
+        android:textAllCaps="false"
+        android:text="Select query sequence file"
+        android:textColor="@color/colorPrimary" />
+
+    <TextView
+        android:id="@+id/mainSelectedQSFileNameTextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:padding="10dp"
+        android:layout_below="@id/mainSelectQSFileButton" />
+
+    <Button
+        android:id="@+id/mainUploadQSFileButton"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_below="@id/mainSelectedQSFileNameTextView"
+        android:background="@color/white"
+        android:textAllCaps="false"
+        android:text="Upload query sequence file"
+        android:textColor="@color/colorPrimary" />
+
+</RelativeLayout>
