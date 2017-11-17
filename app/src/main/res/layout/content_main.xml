@@ -1,20 +1,94 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="10dp"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context="org.hits.epa_ng_android.MainActivity"
     tools:showIn="@layout/activity_main">
 
+    <ProgressBar
+        android:id="@+id/mainLoadingTreesProgressBar"
+        style="?android:attr/progressBarStyle"
+        android:layout_width="match_parent"
+        android:layout_height="30dp"
+        android:layout_centerHorizontal="true" />
+
     <TextView
+        android:id="@+id/mainLoadingTreesTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Hello World!"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:layout_below="@id/mainLoadingTreesProgressBar"
+        android:layout_centerHorizontal="true"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginBottom="30dp"
+        android:text="@string/loading_trees" />
 
-</android.support.constraint.ConstraintLayout>
+    <TextView
+        android:id="@+id/mainSelectTreeTitleTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/mainLoadingTreesTextView"
+        android:layout_centerHorizontal="true"
+        android:text="@string/select_tree" />
+
+    <Spinner
+        android:id="@+id/mainTreesListSpinner"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/mainSelectTreeTitleTextView"
+        android:layout_marginBottom="30dp"
+        android:background="@drawable/rounded_spinner" />
+
+    <Button
+        android:id="@+id/mainSelectQSFileButton"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_below="@id/mainTreesListSpinner"
+        android:background="@color/white"
+        android:text="@string/select_qs"
+        android:textAllCaps="false"
+        android:textColor="@color/gray70" />
+
+    <TextView
+        android:id="@+id/mainSelectedQSFileNameTextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/mainSelectQSFileButton"
+        android:gravity="center"
+        android:padding="10dp" />
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/mainSelectedQSFileNameTextView"
+        android:layout_centerHorizontal="true">
+
+        <Button
+            android:id="@+id/mainUploadQSFileButton"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:background="@color/white"
+            android:text="@string/upload_qs"
+            android:textAllCaps="false"
+            android:textColor="@color/gray70" />
+
+        <TextView
+            android:id="@+id/mainUploadedQSFileTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:drawableStart="@drawable/ic_action_tick"
+            android:gravity="center"
+            android:text="@string/uploaded"
+            android:textColor="@color/colorPrimary"
+            android:textStyle="bold"
+            android:visibility="gone" />
+
+    </FrameLayout>
+
+
+</RelativeLayout>
