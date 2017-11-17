@@ -25,7 +25,7 @@
         android:layout_centerHorizontal="true"
         android:layout_gravity="center_horizontal"
         android:layout_marginBottom="30dp"
-        android:text="Loading available trees..." />
+        android:text="@string/loading_trees" />
 
     <TextView
         android:id="@+id/mainSelectTreeTitleTextView"
@@ -33,7 +33,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/mainLoadingTreesTextView"
         android:layout_centerHorizontal="true"
-        android:text="Select the tree" />
+        android:text="@string/select_tree" />
 
     <Spinner
         android:id="@+id/mainTreesListSpinner"
@@ -49,26 +49,46 @@
         android:layout_height="40dp"
         android:layout_below="@id/mainTreesListSpinner"
         android:background="@color/white"
+        android:text="@string/select_qs"
         android:textAllCaps="false"
-        android:text="Select query sequence file"
-        android:textColor="@color/colorPrimary" />
+        android:textColor="@color/gray70" />
 
     <TextView
         android:id="@+id/mainSelectedQSFileNameTextView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_below="@id/mainSelectQSFileButton"
         android:gravity="center"
-        android:padding="10dp"
-        android:layout_below="@id/mainSelectQSFileButton" />
+        android:padding="10dp" />
 
-    <Button
-        android:id="@+id/mainUploadQSFileButton"
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="40dp"
+        android:layout_height="wrap_content"
         android:layout_below="@id/mainSelectedQSFileNameTextView"
-        android:background="@color/white"
-        android:textAllCaps="false"
-        android:text="Upload query sequence file"
-        android:textColor="@color/colorPrimary" />
+        android:layout_centerHorizontal="true">
+
+        <Button
+            android:id="@+id/mainUploadQSFileButton"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:background="@color/white"
+            android:text="@string/upload_qs"
+            android:textAllCaps="false"
+            android:textColor="@color/gray70" />
+
+        <TextView
+            android:id="@+id/mainUploadedQSFileTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:drawableStart="@drawable/ic_action_tick"
+            android:gravity="center"
+            android:text="@string/uploaded"
+            android:textColor="@color/colorPrimary"
+            android:textStyle="bold"
+            android:visibility="gone" />
+
+    </FrameLayout>
+
 
 </RelativeLayout>

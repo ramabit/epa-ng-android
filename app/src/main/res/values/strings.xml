@@ -2,5 +2,10 @@
     <string name="app_name">EPA-ng-android</string>
     <string name="action_settings">Settings</string>
 
-
+    <string name="loading_trees">Loading available trees&#8230;</string>
+    <string name="select_tree">Select the tree</string>
+    <string name="select_qs">Select query sequence file</string>
+    <string name="upload_qs">Upload query sequence file</string>
+    <string name="send_analysis_request">Send analysis request</string>
+    <string name="uploaded">Uploaded</string>
 </resources>
