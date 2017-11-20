@@ -4,8 +4,6 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
@@ -37,7 +35,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends BaseActivity {
 
     @BindView(R.id.toolbar)
     Toolbar toolbar;
@@ -87,10 +85,9 @@ public class MainActivity extends AppCompatActivity {
         });
 
         uploadQSFileButton.setOnClickListener(view -> uploadQSFile());
+        disableButton(uploadQSFileButton);
 
-        sendRequestFloatingButton.setOnClickListener(view ->
-                Snackbar.make(view, "Here I will send the request", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show());
+        sendRequestFloatingButton.setOnClickListener(view -> runAnalysis());
     }
 
     @Override
@@ -132,8 +129,7 @@ public class MainActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
     }
 
-
-    public void getSupportedTrees() {
+    private void getSupportedTrees() {
         treesListSpinner.setEnabled(false);
         loadingTreesProgressBar.setVisibility(View.VISIBLE);
         loadingTreesTextView.setVisibility(View.VISIBLE);
@@ -162,6 +158,23 @@ public class MainActivity extends AppCompatActivity {
         loadingTreesProgressBar.setVisibility(View.GONE);
         loadingTreesTextView.setVisibility(View.GONE);
         treesListSpinner.setEnabled(true);
+    }
+
+    private void runAnalysis() {
+        String treeName = treesListSpinner.getSelectedItem().toString();
+        String uploadedQSFileUUID = mAttachedFile.getUUIDToken();
+        Call<Object> call = EPAngServiceAPI.getInstance().getService().runAnalysis(treeName, uploadedQSFileUUID);
+        call.enqueue(new Callback<Object>() {
+            @Override
+            public void onResponse(Call<Object> call, Response<Object> response) {
+                Log.d("Run analysis", response.message());
+            }
+
+            @Override
+            public void onFailure(Call<Object> call, Throwable t) {
+                Log.d("Run analysis", t.getMessage());
+            }
+        });
     }
 
     public void chooseFile() {
@@ -197,26 +210,25 @@ public class MainActivity extends AppCompatActivity {
         mAttachedFile = qsFile;
         selectedQSFileNameTextView.setText(qsFile.getName());
         selectedQSFileNameTextView.setVisibility(View.VISIBLE);
-        uploadQSFileButton.setEnabled(true);
-        noQSFileUploaded();
+        enableButton(uploadQSFileButton);
     }
 
     private void notQSFileSelected() {
         mAttachedFile = null;
         selectedQSFileNameTextView.setVisibility(View.INVISIBLE);
-        uploadQSFileButton.setEnabled(false);
+        disableButton(uploadQSFileButton);
         noQSFileUploaded();
     }
 
     private void qsFileUploaded() {
         Toast.makeText(this, "Query Sequence file uploaded successfully!", Toast.LENGTH_SHORT).show();
-        uploadQSFileButton.setVisibility(View.INVISIBLE);
+        disableButton(uploadQSFileButton);
         uploadedQSFileTextView.setVisibility(View.VISIBLE);
         sendRequestFloatingButton.setVisibility(View.VISIBLE);
     }
 
     private void noQSFileUploaded() {
-        uploadQSFileButton.setVisibility(View.VISIBLE);
+        disableButton(uploadQSFileButton);
         uploadedQSFileTextView.setVisibility(View.INVISIBLE);
         sendRequestFloatingButton.setVisibility(View.INVISIBLE);
     }
@@ -237,7 +249,7 @@ public class MainActivity extends AppCompatActivity {
 
                 QSFileUploadResponse qsFileUploadResponse = response.body();
                 if (qsFileUploadResponse != null) {
-                    mAttachedFile.setToken(qsFileUploadResponse.getToken());
+                    mAttachedFile.setUUIDToken(qsFileUploadResponse.getToken());
                     qsFileUploaded();
                 }
             }

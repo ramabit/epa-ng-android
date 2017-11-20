@@ -48,10 +48,11 @@
         android:layout_width="match_parent"
         android:layout_height="40dp"
         android:layout_below="@id/mainTreesListSpinner"
-        android:background="@color/white"
+        android:background="@color/colorPrimary"
         android:text="@string/select_qs"
         android:textAllCaps="false"
-        android:textColor="@color/gray70" />
+        android:textColor="@color/white"
+        android:textStyle="bold" />
 
     <TextView
         android:id="@+id/mainSelectedQSFileNameTextView"
@@ -63,22 +64,23 @@
         android:gravity="center"
         android:visibility="invisible" />
 
-    <FrameLayout
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/mainSelectedQSFileNameTextView"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="5dp">
+        android:layout_marginTop="5dp"
+        android:orientation="vertical">
 
         <Button
             android:id="@+id/mainUploadQSFileButton"
             android:layout_width="match_parent"
             android:layout_height="40dp"
-            android:background="@color/white"
-            android:enabled="false"
+            android:background="@color/colorPrimary"
             android:text="@string/upload_qs"
             android:textAllCaps="false"
-            android:textColor="@color/gray70" />
+            android:textColor="@color/white"
+            android:textStyle="bold" />
 
         <TextView
             android:id="@+id/mainUploadedQSFileTextView"
@@ -92,7 +94,6 @@
             android:textStyle="bold"
             android:visibility="gone" />
 
-    </FrameLayout>
-
+    </LinearLayout>
 
 </RelativeLayout>

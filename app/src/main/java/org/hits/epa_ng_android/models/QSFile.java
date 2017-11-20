@@ -9,7 +9,7 @@ public class QSFile {
     private File file;
     private String name;
     private Uri uri;
-    private String token;
+    private String uuidToken;
 
     public QSFile(File file, String name, Uri uri) {
         this.file = file;
@@ -29,12 +29,12 @@ public class QSFile {
         return uri;
     }
 
-    public String getToken() {
-        return token;
+    public String getUUIDToken() {
+        return uuidToken;
     }
 
-    public void setToken(String token) {
-        this.token = token;
+    public void setUUIDToken(String uuidToken) {
+        this.uuidToken = uuidToken;
     }
 
 }
