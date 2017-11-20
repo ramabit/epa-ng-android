@@ -28,8 +28,9 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
         android:layout_margin="@dimen/fab_margin"
-        android:tooltipText="@string/send_analysis_request"
         android:backgroundTint="@color/white"
+        android:tooltipText="@string/send_analysis_request"
+        android:visibility="invisible"
         app:srcCompat="@drawable/ic_action_send_green" />
 
 </android.support.design.widget.CoordinatorLayout>

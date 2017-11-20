@@ -56,20 +56,19 @@
     <TextView
         android:id="@+id/mainSelectedQSFileNameTextView"
         android:layout_width="wrap_content"
-        android:layout_height="35dp"
+        android:layout_height="40dp"
         android:layout_below="@id/mainSelectQSFileButton"
         android:layout_centerHorizontal="true"
         android:drawableStart="@drawable/ic_action_attach_file"
         android:gravity="center"
-        android:padding="10dp"
-        android:visibility="gone" />
+        android:visibility="invisible" />
 
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/mainSelectedQSFileNameTextView"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="10dp">
+        android:layout_marginTop="5dp">
 
         <Button
             android:id="@+id/mainUploadQSFileButton"
