@@ -1,5 +1,6 @@
 package org.hits.epa_ng_android.network;
 
+import org.hits.epa_ng_android.models.responses.QSFileUploadResponse;
 import org.hits.epa_ng_android.models.responses.TreesResponse;
 
 import okhttp3.MultipartBody;
@@ -17,7 +18,7 @@ public interface EPAngService {
 
     @Multipart
     @POST("upload-qs")
-    Call<Object> uploadQSFile(@Part MultipartBody.Part qsFile);
+    Call<QSFileUploadResponse> uploadQSFile(@Part MultipartBody.Part qsFile);
 
     @GET("phylogenetic")
     Call<Object> runAnalysis(@Query("tree") String treeName,

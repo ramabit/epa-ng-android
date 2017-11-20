@@ -9,6 +9,7 @@ public class QSFile {
     private File file;
     private String name;
     private Uri uri;
+    private String token;
 
     public QSFile(File file, String name, Uri uri) {
         this.file = file;
@@ -26,6 +27,14 @@ public class QSFile {
 
     public Uri getUri() {
         return uri;
+    }
+
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
     }
 
 }
