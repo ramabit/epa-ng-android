@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">EPA-ng-android</string>
+    <string name="app_name">EPA-ng</string>
     <string name="action_settings">Settings</string>
 
     <string name="loading_trees">Loading available trees&#8230;</string>

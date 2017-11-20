@@ -7,7 +7,7 @@
     android:orientation="vertical"
     android:padding="10dp"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context="org.hits.epa_ng_android.MainActivity"
+    tools:context="org.hits.epa_ng_android.activities.MainActivity"
     tools:showIn="@layout/activity_main">
 
     <ProgressBar
@@ -48,38 +48,44 @@
         android:layout_width="match_parent"
         android:layout_height="40dp"
         android:layout_below="@id/mainTreesListSpinner"
-        android:background="@color/white"
+        android:background="@color/colorPrimary"
         android:text="@string/select_qs"
         android:textAllCaps="false"
-        android:textColor="@color/gray70" />
+        android:textColor="@color/white"
+        android:textStyle="bold" />
 
     <TextView
         android:id="@+id/mainSelectedQSFileNameTextView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:layout_height="40dp"
         android:layout_below="@id/mainSelectQSFileButton"
+        android:layout_centerHorizontal="true"
+        android:drawableStart="@drawable/ic_action_attach_file"
         android:gravity="center"
-        android:padding="10dp" />
+        android:visibility="invisible" />
 
-    <FrameLayout
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/mainSelectedQSFileNameTextView"
-        android:layout_centerHorizontal="true">
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="5dp"
+        android:orientation="vertical">
 
         <Button
             android:id="@+id/mainUploadQSFileButton"
             android:layout_width="match_parent"
             android:layout_height="40dp"
-            android:background="@color/white"
+            android:background="@color/colorPrimary"
             android:text="@string/upload_qs"
             android:textAllCaps="false"
-            android:textColor="@color/gray70" />
+            android:textColor="@color/white"
+            android:textStyle="bold" />
 
         <TextView
             android:id="@+id/mainUploadedQSFileTextView"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_gravity="center_horizontal"
             android:drawableStart="@drawable/ic_action_tick"
             android:gravity="center"
@@ -88,7 +94,6 @@
             android:textStyle="bold"
             android:visibility="gone" />
 
-    </FrameLayout>
-
+    </LinearLayout>
 
 </RelativeLayout>
