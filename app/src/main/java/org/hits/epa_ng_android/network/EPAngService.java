@@ -1,5 +1,6 @@
 package org.hits.epa_ng_android.network;
 
+import org.hits.epa_ng_android.models.EPAngData;
 import org.hits.epa_ng_android.models.responses.QSFileUploadResponse;
 import org.hits.epa_ng_android.models.responses.TreesResponse;
 
@@ -21,7 +22,7 @@ public interface EPAngService {
     Call<QSFileUploadResponse> uploadQSFile(@Part MultipartBody.Part qsFile);
 
     @GET("phylogenetic")
-    Call<Object> runAnalysis(@Query("tree") String treeName,
-                             @Query("qs") String qsUUID);
+    Call<EPAngData> runAnalysis(@Query("tree") String treeName,
+                                @Query("qs") String qsUUID);
 
 }
