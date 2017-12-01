@@ -6,10 +6,10 @@ import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
-import org.hits.epa_ng_android.models.EPAngData;
 import org.hits.epa_ng_android.models.QSFile;
 import org.hits.epa_ng_android.models.responses.QSFileUploadResponse;
 import org.hits.epa_ng_android.models.responses.TreesResponse;
+import org.hits.epa_ng_android.models.responses.epa.EPAngData;
 import org.hits.epa_ng_android.network.callbacks.GetSupportedTreesCallback;
 import org.hits.epa_ng_android.network.callbacks.RunAnalysisCallback;
 import org.hits.epa_ng_android.network.callbacks.UploadQSFileCallback;

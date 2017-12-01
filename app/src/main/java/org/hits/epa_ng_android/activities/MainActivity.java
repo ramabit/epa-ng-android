@@ -16,8 +16,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import org.hits.epa_ng_android.R;
-import org.hits.epa_ng_android.models.EPAngData;
 import org.hits.epa_ng_android.models.QSFile;
+import org.hits.epa_ng_android.models.responses.epa.EPAngData;
 import org.hits.epa_ng_android.network.EPAngServiceAPI;
 import org.hits.epa_ng_android.network.callbacks.GetSupportedTreesCallback;
 import org.hits.epa_ng_android.network.callbacks.RunAnalysisCallback;
@@ -229,6 +229,11 @@ public class MainActivity extends BaseActivity {
             @Override
             public void onSuccess(EPAngData data) {
                 // TODO show response data (new tree)
+                Intent intent = new Intent(MainActivity.this, ShowTreeActivity.class);
+                Bundle bundle = new Bundle();
+                bundle.putParcelable(ShowTreeActivity.EPA_DATA_KEY, data);
+                intent.putExtras(bundle);
+                MainActivity.this.startActivity(intent);
             }
 
             @Override

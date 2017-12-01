@@ -1,8 +1,8 @@
 package org.hits.epa_ng_android.network;
 
-import org.hits.epa_ng_android.models.EPAngData;
 import org.hits.epa_ng_android.models.responses.QSFileUploadResponse;
 import org.hits.epa_ng_android.models.responses.TreesResponse;
+import org.hits.epa_ng_android.models.responses.epa.EPAngData;
 
 import okhttp3.MultipartBody;
 import retrofit2.Call;
