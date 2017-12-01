@@ -8,4 +8,5 @@
     <string name="upload_qs">Upload query sequence file</string>
     <string name="send_analysis_request">Send analysis request</string>
     <string name="uploaded">Uploaded</string>
+    <string name="title_activity_show_tree">ShowTreeActivity</string>
 </resources>

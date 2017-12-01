@@ -29,6 +29,10 @@
             android:name=".activities.BaseActivity"
             android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".activities.ShowTreeActivity"
+            android:label="@string/title_activity_show_tree"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 
 </manifest>

@@ -1,16 +1,31 @@
 package org.hits.epa_ng_android.network;
 
+import android.util.Log;
+
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
+import org.hits.epa_ng_android.models.QSFile;
+import org.hits.epa_ng_android.models.responses.QSFileUploadResponse;
+import org.hits.epa_ng_android.models.responses.TreesResponse;
+import org.hits.epa_ng_android.models.responses.epa.EPAngData;
+import org.hits.epa_ng_android.network.callbacks.GetSupportedTreesCallback;
+import org.hits.epa_ng_android.network.callbacks.RunAnalysisCallback;
+import org.hits.epa_ng_android.network.callbacks.UploadQSFileCallback;
+
 import java.io.IOException;
 
 import okhttp3.Interceptor;
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
+import okhttp3.RequestBody;
 import okhttp3.Response;
 import okhttp3.logging.HttpLoggingInterceptor;
+import retrofit2.Call;
+import retrofit2.Callback;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
@@ -34,8 +49,7 @@ public class EPAngServiceAPI {
         return mInstance;
     }
 
-    public EPAngService getService() {
-
+    private EPAngService getService() {
         Gson gsonConfig = new GsonBuilder()
                 .setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
                 .create();
@@ -75,6 +89,77 @@ public class EPAngServiceAPI {
                 .build();
 
         return retrofit.create(EPAngService.class);
+    }
+
+    public void getSupportedTrees(GetSupportedTreesCallback callback) {
+        Call<TreesResponse> getTreesCall = getService().getTrees();
+        getTreesCall.enqueue(new Callback<TreesResponse>() {
+            @Override
+            public void onResponse(Call<TreesResponse> call, retrofit2.Response<TreesResponse> response) {
+                TreesResponse treesResponse = response.body();
+                if (treesResponse != null) {
+                    callback.onSuccess(treesResponse.getTrees());
+                } else {
+                    callback.onError(new Exception("Error " + response.code() + " " + response.message()));
+                }
+            }
+
+            @Override
+            public void onFailure(Call<TreesResponse> call, Throwable t) {
+                Log.e("ERROR", t.getMessage());
+                callback.onError(t);
+            }
+        });
+    }
+
+    public void uploadQSFile(QSFile qsFile, UploadQSFileCallback callback) {
+        // create RequestBody instance from file
+        RequestBody requestFile = RequestBody.create(MediaType.parse("text"), qsFile.getFile());
+
+        // MultipartBody.Part is used to send also the actual file name
+        MultipartBody.Part body =
+                MultipartBody.Part.createFormData("qs", qsFile.getName(), requestFile);
+
+        Call<QSFileUploadResponse> uploadFileCall = getService().uploadQSFile(body);
+        uploadFileCall.enqueue(new Callback<QSFileUploadResponse>() {
+            @Override
+            public void onResponse(Call<QSFileUploadResponse> call, retrofit2.Response<QSFileUploadResponse> response) {
+                QSFileUploadResponse qsFileUploadResponse = response.body();
+                if (qsFileUploadResponse != null) {
+                    qsFile.setUUIDToken(qsFileUploadResponse.getToken());
+                    callback.onSuccess();
+                } else {
+                    callback.onError(new Exception("Error " + response.code() + " " + response.message()));
+                }
+            }
+
+            @Override
+            public void onFailure(Call<QSFileUploadResponse> call, Throwable t) {
+                Log.e("ERROR", t.getMessage());
+                callback.onError(t);
+            }
+        });
+    }
+
+    public void runAnalysis(String treeName, String uploadedQSFileUUID, RunAnalysisCallback callback) {
+        Call<EPAngData> call = getService().runAnalysis(treeName, uploadedQSFileUUID);
+        call.enqueue(new Callback<EPAngData>() {
+            @Override
+            public void onResponse(Call<EPAngData> call, retrofit2.Response<EPAngData> response) {
+                EPAngData data = response.body();
+                if (data != null) {
+                    callback.onSuccess(data);
+                } else {
+                    callback.onError(new Exception("Error " + response.code() + " " + response.message()));
+                }
+            }
+
+            @Override
+            public void onFailure(Call<EPAngData> call, Throwable t) {
+                Log.e("ERROR", t.getMessage());
+                callback.onError(t);
+            }
+        });
     }
 
 }

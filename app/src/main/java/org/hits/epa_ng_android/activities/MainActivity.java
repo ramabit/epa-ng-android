@@ -5,7 +5,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -18,9 +17,11 @@ import android.widget.Toast;
 
 import org.hits.epa_ng_android.R;
 import org.hits.epa_ng_android.models.QSFile;
-import org.hits.epa_ng_android.models.responses.QSFileUploadResponse;
-import org.hits.epa_ng_android.models.responses.TreesResponse;
+import org.hits.epa_ng_android.models.responses.epa.EPAngData;
 import org.hits.epa_ng_android.network.EPAngServiceAPI;
+import org.hits.epa_ng_android.network.callbacks.GetSupportedTreesCallback;
+import org.hits.epa_ng_android.network.callbacks.RunAnalysisCallback;
+import org.hits.epa_ng_android.network.callbacks.UploadQSFileCallback;
 import org.hits.epa_ng_android.utils.FileManager;
 
 import java.io.File;
@@ -28,12 +29,6 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import okhttp3.MediaType;
-import okhttp3.MultipartBody;
-import okhttp3.RequestBody;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 public class MainActivity extends BaseActivity {
 
@@ -134,19 +129,15 @@ public class MainActivity extends BaseActivity {
         loadingTreesProgressBar.setVisibility(View.VISIBLE);
         loadingTreesTextView.setVisibility(View.VISIBLE);
 
-        Call<TreesResponse> getTreesCall = EPAngServiceAPI.getInstance().getService().getTrees();
-        getTreesCall.enqueue(new Callback<TreesResponse>() {
+        EPAngServiceAPI.getInstance().getSupportedTrees(new GetSupportedTreesCallback() {
             @Override
-            public void onResponse(Call<TreesResponse> call, retrofit2.Response<TreesResponse> response) {
-                TreesResponse treesResponse = response.body();
-                if (treesResponse != null) {
-                    updateTrees(treesResponse.getTrees());
-                }
+            public void onSuccess(List<String> trees) {
+                updateTrees(trees);
             }
 
             @Override
-            public void onFailure(Call<TreesResponse> call, Throwable t) {
-                Log.e("ERROR", t.getMessage());
+            public void onError(Throwable throwable) {
+                Toast.makeText(MainActivity.this, throwable.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -158,23 +149,6 @@ public class MainActivity extends BaseActivity {
         loadingTreesProgressBar.setVisibility(View.GONE);
         loadingTreesTextView.setVisibility(View.GONE);
         treesListSpinner.setEnabled(true);
-    }
-
-    private void runAnalysis() {
-        String treeName = treesListSpinner.getSelectedItem().toString();
-        String uploadedQSFileUUID = mAttachedFile.getUUIDToken();
-        Call<Object> call = EPAngServiceAPI.getInstance().getService().runAnalysis(treeName, uploadedQSFileUUID);
-        call.enqueue(new Callback<Object>() {
-            @Override
-            public void onResponse(Call<Object> call, Response<Object> response) {
-                Log.d("Run analysis", response.message());
-            }
-
-            @Override
-            public void onFailure(Call<Object> call, Throwable t) {
-                Log.d("Run analysis", t.getMessage());
-            }
-        });
     }
 
     public void chooseFile() {
@@ -234,29 +208,37 @@ public class MainActivity extends BaseActivity {
     }
 
     private void uploadQSFile() {
-        // create RequestBody instance from file
-        RequestBody requestFile = RequestBody.create(MediaType.parse("text"), mAttachedFile.getFile());
-
-        // MultipartBody.Part is used to send also the actual file name
-        MultipartBody.Part body =
-                MultipartBody.Part.createFormData("qs", mAttachedFile.getName(), requestFile);
-
-        Call<QSFileUploadResponse> uploadFileCall = EPAngServiceAPI.getInstance().getService().uploadQSFile(body);
-        uploadFileCall.enqueue(new Callback<QSFileUploadResponse>() {
+        EPAngServiceAPI.getInstance().uploadQSFile(mAttachedFile, new UploadQSFileCallback() {
             @Override
-            public void onResponse(Call<QSFileUploadResponse> call, Response<QSFileUploadResponse> response) {
-                Log.d("Upload QS file", response.message());
-
-                QSFileUploadResponse qsFileUploadResponse = response.body();
-                if (qsFileUploadResponse != null) {
-                    mAttachedFile.setUUIDToken(qsFileUploadResponse.getToken());
-                    qsFileUploaded();
-                }
+            public void onSuccess() {
+                qsFileUploaded();
             }
 
             @Override
-            public void onFailure(Call<QSFileUploadResponse> call, Throwable t) {
-                Log.d("Upload QS file", t.getMessage());
+            public void onError(Throwable throwable) {
+                Toast.makeText(MainActivity.this, throwable.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void runAnalysis() {
+        String treeName = treesListSpinner.getSelectedItem().toString();
+        String uploadedQSFileUUID = mAttachedFile.getUUIDToken();
+
+        EPAngServiceAPI.getInstance().runAnalysis(treeName, uploadedQSFileUUID, new RunAnalysisCallback() {
+            @Override
+            public void onSuccess(EPAngData data) {
+                // TODO show response data (new tree)
+                Intent intent = new Intent(MainActivity.this, ShowTreeActivity.class);
+                Bundle bundle = new Bundle();
+                bundle.putParcelable(ShowTreeActivity.EPA_DATA_KEY, data);
+                intent.putExtras(bundle);
+                MainActivity.this.startActivity(intent);
+            }
+
+            @Override
+            public void onError(Throwable throwable) {
+                Toast.makeText(MainActivity.this, throwable.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
     }
