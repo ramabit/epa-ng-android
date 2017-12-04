@@ -1,6 +1,8 @@
 package org.hits.epa_ng_android.activities;
 
+import android.app.Dialog;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -8,9 +10,12 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -20,7 +25,8 @@ import org.hits.epa_ng_android.models.QSFile;
 import org.hits.epa_ng_android.models.responses.epa.EPAngData;
 import org.hits.epa_ng_android.network.EPAngServiceAPI;
 import org.hits.epa_ng_android.network.callbacks.GetSupportedTreesCallback;
-import org.hits.epa_ng_android.network.callbacks.RunAnalysisCallback;
+import org.hits.epa_ng_android.network.callbacks.RunAnalysisWithGraphicResultCallback;
+import org.hits.epa_ng_android.network.callbacks.RunAnalysisWithTextResultCallback;
 import org.hits.epa_ng_android.network.callbacks.UploadQSFileCallback;
 import org.hits.epa_ng_android.utils.FileManager;
 
@@ -31,6 +37,9 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class MainActivity extends BaseActivity {
+
+    @BindView(R.id.mainLoadingRelativeLayout)
+    RelativeLayout loadingRelativeLayout;
 
     @BindView(R.id.toolbar)
     Toolbar toolbar;
@@ -224,23 +233,75 @@ public class MainActivity extends BaseActivity {
     private void runAnalysis() {
         String treeName = treesListSpinner.getSelectedItem().toString();
         String uploadedQSFileUUID = mAttachedFile.getUUIDToken();
+        showDialogToDecideResultType(treeName, uploadedQSFileUUID);
+    }
 
-        EPAngServiceAPI.getInstance().runAnalysis(treeName, uploadedQSFileUUID, new RunAnalysisCallback() {
+    public void showDialogToDecideResultType(String treeName, String uploadedQSFileUUID) {
+        final Dialog dialog = new Dialog(this);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setCancelable(true);
+        dialog.setContentView(R.layout.result_type_dialog);
+
+        LinearLayout textTypeLayout = (LinearLayout) dialog.findViewById(R.id.resultTextTypeLinearLayout);
+        LinearLayout graphicTypeLayout = (LinearLayout) dialog.findViewById(R.id.resultGraphicTypeLinearLayout);
+
+        textTypeLayout.setOnClickListener(view -> {
+            loadingRelativeLayout.setVisibility(View.VISIBLE);
+            dialog.dismiss();
+            goToTextResult(treeName, uploadedQSFileUUID);
+        });
+        graphicTypeLayout.setOnClickListener(view -> {
+            loadingRelativeLayout.setVisibility(View.VISIBLE);
+            dialog.dismiss();
+            goToGraphicalResult(treeName, uploadedQSFileUUID);
+        });
+
+        dialog.show();
+    }
+
+    private void goToTextResult(String treeName, String uploadedQSFileUUID) {
+        EPAngServiceAPI.getInstance().runAnalysisWithTextResult(treeName, uploadedQSFileUUID, new RunAnalysisWithTextResultCallback() {
             @Override
             public void onSuccess(EPAngData data) {
-                // TODO show response data (new tree)
                 Intent intent = new Intent(MainActivity.this, ShowTreeActivity.class);
                 Bundle bundle = new Bundle();
+                bundle.putInt(ShowTreeActivity.TYPE_KEY, ShowTreeActivity.TEXT_RESULT_TYPE);
                 bundle.putParcelable(ShowTreeActivity.EPA_DATA_KEY, data);
                 intent.putExtras(bundle);
+
+                loadingRelativeLayout.setVisibility(View.INVISIBLE);
                 MainActivity.this.startActivity(intent);
             }
 
             @Override
             public void onError(Throwable throwable) {
+                loadingRelativeLayout.setVisibility(View.INVISIBLE);
                 Toast.makeText(MainActivity.this, throwable.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+    private void goToGraphicalResult(String treeName, String uploadedQSFileUUID) {
+        EPAngServiceAPI.getInstance().runAnalysisWithGraphicResult(treeName, uploadedQSFileUUID,
+                new RunAnalysisWithGraphicResultCallback() {
+                    @Override
+                    public void onSuccess(Bitmap bitmap) {
+                        Intent intent = new Intent(MainActivity.this, ShowTreeActivity.class);
+                        Bundle bundle = new Bundle();
+                        bundle.putInt(ShowTreeActivity.TYPE_KEY, ShowTreeActivity.GRAPHICAL_RESULT_TYPE);
+                        addBitmapToBundle(bundle, bitmap);
+                        intent.putExtras(bundle);
+
+                        loadingRelativeLayout.setVisibility(View.INVISIBLE);
+                        MainActivity.this.startActivity(intent);
+                    }
+
+                    @Override
+                    public void onError(Throwable throwable) {
+                        loadingRelativeLayout.setVisibility(View.INVISIBLE);
+                        Toast.makeText(MainActivity.this, throwable.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                });
     }
 
 }

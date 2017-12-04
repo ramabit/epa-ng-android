@@ -1,5 +1,7 @@
 package org.hits.epa_ng_android.network;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.util.Log;
 
 import com.google.gson.FieldNamingPolicy;
@@ -11,7 +13,8 @@ import org.hits.epa_ng_android.models.responses.QSFileUploadResponse;
 import org.hits.epa_ng_android.models.responses.TreesResponse;
 import org.hits.epa_ng_android.models.responses.epa.EPAngData;
 import org.hits.epa_ng_android.network.callbacks.GetSupportedTreesCallback;
-import org.hits.epa_ng_android.network.callbacks.RunAnalysisCallback;
+import org.hits.epa_ng_android.network.callbacks.RunAnalysisWithGraphicResultCallback;
+import org.hits.epa_ng_android.network.callbacks.RunAnalysisWithTextResultCallback;
 import org.hits.epa_ng_android.network.callbacks.UploadQSFileCallback;
 
 import java.io.IOException;
@@ -23,6 +26,7 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
+import okhttp3.ResponseBody;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -141,8 +145,9 @@ public class EPAngServiceAPI {
         });
     }
 
-    public void runAnalysis(String treeName, String uploadedQSFileUUID, RunAnalysisCallback callback) {
-        Call<EPAngData> call = getService().runAnalysis(treeName, uploadedQSFileUUID);
+    public void runAnalysisWithTextResult(String treeName, String uploadedQSFileUUID,
+                                          RunAnalysisWithTextResultCallback callback) {
+        Call<EPAngData> call = getService().runAnalysisWithTextResult(treeName, uploadedQSFileUUID);
         call.enqueue(new Callback<EPAngData>() {
             @Override
             public void onResponse(Call<EPAngData> call, retrofit2.Response<EPAngData> response) {
@@ -156,6 +161,29 @@ public class EPAngServiceAPI {
 
             @Override
             public void onFailure(Call<EPAngData> call, Throwable t) {
+                Log.e("ERROR", t.getMessage());
+                callback.onError(t);
+            }
+        });
+    }
+
+    public void runAnalysisWithGraphicResult(String treeName, String uploadedQSFileUUID,
+                                             RunAnalysisWithGraphicResultCallback callback) {
+        Call<ResponseBody> call = getService().runAnalysisWithGraphicalResult(treeName, uploadedQSFileUUID);
+        call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, retrofit2.Response<ResponseBody> response) {
+                ResponseBody data = response.body();
+                if (data != null) {
+                    Bitmap bitmap = BitmapFactory.decodeStream(response.body().byteStream());
+                    callback.onSuccess(bitmap);
+                } else {
+                    callback.onError(new Exception("Error " + response.code() + " " + response.message()));
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
                 Log.e("ERROR", t.getMessage());
                 callback.onError(t);
             }
