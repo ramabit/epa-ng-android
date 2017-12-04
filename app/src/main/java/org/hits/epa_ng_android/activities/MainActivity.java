@@ -242,8 +242,8 @@ public class MainActivity extends BaseActivity {
         dialog.setCancelable(true);
         dialog.setContentView(R.layout.result_type_dialog);
 
-        LinearLayout textTypeLayout = (LinearLayout) dialog.findViewById(R.id.resultTextTypeLinearLayout);
-        LinearLayout graphicTypeLayout = (LinearLayout) dialog.findViewById(R.id.resultGraphicTypeLinearLayout);
+        LinearLayout textTypeLayout = dialog.findViewById(R.id.resultTextTypeLinearLayout);
+        LinearLayout graphicTypeLayout = dialog.findViewById(R.id.resultGraphicTypeLinearLayout);
 
         textTypeLayout.setOnClickListener(view -> {
             loadingRelativeLayout.setVisibility(View.VISIBLE);
