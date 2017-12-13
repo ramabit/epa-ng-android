@@ -10,4 +10,6 @@
     <color name="gray20">#dbdcde</color>
     <color name="gray50">#999999</color>
     <color name="gray70">#7b7b7b</color>
+
+    <color name="grayTransparent70">#887b7b7b</color>
 </resources>

@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">EPA-ng</string>
-    <string name="action_settings">Settings</string>
+    <string name="title_activity_show_tree">Show tree</string>
 
     <string name="loading_trees">Loading available trees&#8230;</string>
     <string name="select_tree">Select the tree</string>
@@ -8,5 +8,8 @@
     <string name="upload_qs">Upload query sequence file</string>
     <string name="send_analysis_request">Send analysis request</string>
     <string name="uploaded">Uploaded</string>
-    <string name="title_activity_show_tree">ShowTreeActivity</string>
+
+    <string name="graphical_result">Graphical result</string>
+    <string name="text_result">Text result</string>
+
 </resources>
