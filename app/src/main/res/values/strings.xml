@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">EPA-ng</string>
-    <string name="title_activity_show_tree">Show tree</string>
+    <string name="title_activity_show_results">Tree result</string>
 
     <string name="loading_trees">Loading available trees&#8230;</string>
     <string name="select_tree">Select the tree</string>
@@ -11,5 +11,10 @@
 
     <string name="graphical_result">Graphical result</string>
     <string name="text_result">Text result</string>
+
+    <string name="title_tab_horizontal_graphic">HORIZONTAL</string>
+    <string name="title_tab_vertical_graphic">VERTICAL</string>
+    <string name="title_tab_circular_graphic">CIRCULAR</string>
+    <string name="title_tab_text_result">TEXT</string>
 
 </resources>
