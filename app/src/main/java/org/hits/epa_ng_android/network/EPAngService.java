@@ -15,19 +15,46 @@ import retrofit2.http.Query;
 
 public interface EPAngService {
 
+    /**
+     * Get the available trees supported by the server.
+     *
+     * @return a response with the list of trees
+     */
     @GET("trees")
     Call<TreesResponse> getTrees();
 
+    /**
+     * Upload a Query Sequence (QS) file.
+     *
+     * @param qsFile is the file to be uploaded
+     * @return a response with the token (UUID) assigned to the uploaded file
+     */
     @Multipart
     @POST("upload-qs")
     Call<QSFileUploadResponse> uploadQSFile(@Part MultipartBody.Part qsFile);
 
+    /**
+     * Run an analysis and obtain a text result.
+     *
+     * @param treeName is the name of the supported tree to be used for the analysis
+     * @param qsToken  is the token (UUID) of the previously uploaded QS file
+     * @return the result data of the analysis
+     */
     @GET("analysis-text-result")
     Call<EPAngData> runAnalysisWithTextResult(@Query("tree") String treeName,
-                                              @Query("qs") String qsUUID);
+                                              @Query("qs") String qsToken);
 
+    /**
+     * Run an analysis and obtain a graphical result.
+     *
+     * @param treeName    is the name of the supported tree to be used for the analysis
+     * @param qsToken     is the token (UUID) of the previously uploaded QS file
+     * @param graphicType is the desire graphic type: "horizontal" (default), "vertical" or "circular"
+     * @return a response containing the graphic .png image
+     */
     @GET("analysis-graphical-result")
     Call<ResponseBody> runAnalysisWithGraphicalResult(@Query("tree") String treeName,
-                                                      @Query("qs") String qsUUID);
+                                                      @Query("qs") String qsToken,
+                                                      @Query("graphicType") String graphicType);
 
 }
