@@ -3,6 +3,7 @@ package org.hits.epa_ng_android.network;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
@@ -10,6 +11,7 @@ import com.google.gson.GsonBuilder;
 
 import org.hits.epa_ng_android.models.GraphicType;
 import org.hits.epa_ng_android.models.QSFile;
+import org.hits.epa_ng_android.models.requests.ResultsEmailBody;
 import org.hits.epa_ng_android.models.responses.QSFileUploadResponse;
 import org.hits.epa_ng_android.models.responses.TreesResponse;
 import org.hits.epa_ng_android.models.responses.epa.EPAngData;
@@ -17,6 +19,7 @@ import org.hits.epa_ng_android.network.callbacks.GetSupportedTreesCallback;
 import org.hits.epa_ng_android.network.callbacks.RunAnalysisWithGraphicResultCallback;
 import org.hits.epa_ng_android.network.callbacks.RunAnalysisWithTextResultCallback;
 import org.hits.epa_ng_android.network.callbacks.UploadQSFileCallback;
+import org.hits.epa_ng_android.utils.EPAngApplication;
 
 import java.io.IOException;
 
@@ -210,6 +213,22 @@ public class EPAngServiceAPI {
                                    String uploadedQSFileUUID,
                                    RunAnalysisWithGraphicResultCallback callback) {
         runAnalysisWithGraphicResult(treeName, uploadedQSFileUUID, GraphicType.circular, callback);
+    }
+
+    public void sendResultsEmail(String uuid, String email) {
+        Call<Object> call = getService().resultsEmail(new ResultsEmailBody(uuid, email));
+        call.enqueue(new Callback<Object>() {
+            @Override
+            public void onResponse(Call<Object> call, retrofit2.Response<Object> response) {
+                Toast.makeText(EPAngApplication.getInstance(), response.body().toString(), Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onFailure(Call<Object> call, Throwable t) {
+                Log.e("ERROR", t.getMessage());
+                Toast.makeText(EPAngApplication.getInstance(), t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
 }
