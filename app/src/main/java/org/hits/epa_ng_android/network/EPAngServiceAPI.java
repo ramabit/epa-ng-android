@@ -8,6 +8,7 @@ import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
+import org.hits.epa_ng_android.models.GraphicType;
 import org.hits.epa_ng_android.models.QSFile;
 import org.hits.epa_ng_android.models.responses.QSFileUploadResponse;
 import org.hits.epa_ng_android.models.responses.TreesResponse;
@@ -167,9 +168,12 @@ public class EPAngServiceAPI {
         });
     }
 
-    public void runAnalysisWithGraphicResult(String treeName, String uploadedQSFileUUID,
+    public void runAnalysisWithGraphicResult(String treeName,
+                                             String uploadedQSFileUUID,
+                                             GraphicType graphicType,
                                              RunAnalysisWithGraphicResultCallback callback) {
-        Call<ResponseBody> call = getService().runAnalysisWithGraphicalResult(treeName, uploadedQSFileUUID);
+        Call<ResponseBody> call = getService().runAnalysisWithGraphicalResult(treeName,
+                uploadedQSFileUUID, graphicType.getStringValue());
         call.enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, retrofit2.Response<ResponseBody> response) {
@@ -188,6 +192,24 @@ public class EPAngServiceAPI {
                 callback.onError(t);
             }
         });
+    }
+
+    public void getHorizontalGraphic(String treeName,
+                                     String uploadedQSFileUUID,
+                                     RunAnalysisWithGraphicResultCallback callback) {
+        runAnalysisWithGraphicResult(treeName, uploadedQSFileUUID, GraphicType.horizontal, callback);
+    }
+
+    public void getVerticalGraphic(String treeName,
+                                   String uploadedQSFileUUID,
+                                   RunAnalysisWithGraphicResultCallback callback) {
+        runAnalysisWithGraphicResult(treeName, uploadedQSFileUUID, GraphicType.vertical, callback);
+    }
+
+    public void getCircularGraphic(String treeName,
+                                   String uploadedQSFileUUID,
+                                   RunAnalysisWithGraphicResultCallback callback) {
+        runAnalysisWithGraphicResult(treeName, uploadedQSFileUUID, GraphicType.circular, callback);
     }
 
 }

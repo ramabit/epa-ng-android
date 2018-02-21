@@ -1,19 +1,20 @@
 package org.hits.epa_ng_android.activities;
 
-import android.app.Dialog;
+import android.Manifest;
 import android.content.Intent;
-import android.graphics.Bitmap;
+import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.Window;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
@@ -25,7 +26,6 @@ import org.hits.epa_ng_android.models.QSFile;
 import org.hits.epa_ng_android.models.responses.epa.EPAngData;
 import org.hits.epa_ng_android.network.EPAngServiceAPI;
 import org.hits.epa_ng_android.network.callbacks.GetSupportedTreesCallback;
-import org.hits.epa_ng_android.network.callbacks.RunAnalysisWithGraphicResultCallback;
 import org.hits.epa_ng_android.network.callbacks.RunAnalysisWithTextResultCallback;
 import org.hits.epa_ng_android.network.callbacks.UploadQSFileCallback;
 import org.hits.epa_ng_android.utils.FileManager;
@@ -92,6 +92,8 @@ public class MainActivity extends BaseActivity {
         disableButton(uploadQSFileButton);
 
         sendRequestFloatingButton.setOnClickListener(view -> runAnalysis());
+
+        isStoragePermissionGranted();
     }
 
     @Override
@@ -233,65 +235,16 @@ public class MainActivity extends BaseActivity {
     private void runAnalysis() {
         String treeName = treesListSpinner.getSelectedItem().toString();
         String uploadedQSFileUUID = mAttachedFile.getUUIDToken();
-        showDialogToDecideResultType(treeName, uploadedQSFileUUID);
-    }
 
-    public void showDialogToDecideResultType(String treeName, String uploadedQSFileUUID) {
-        final Dialog dialog = new Dialog(this);
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        dialog.setCancelable(true);
-        dialog.setContentView(R.layout.result_type_dialog);
-
-        LinearLayout textTypeLayout = dialog.findViewById(R.id.resultTextTypeLinearLayout);
-        LinearLayout graphicTypeLayout = dialog.findViewById(R.id.resultGraphicTypeLinearLayout);
-
-        textTypeLayout.setOnClickListener(view -> {
-            loadingRelativeLayout.setVisibility(View.VISIBLE);
-            dialog.dismiss();
-            goToTextResult(treeName, uploadedQSFileUUID);
-        });
-        graphicTypeLayout.setOnClickListener(view -> {
-            loadingRelativeLayout.setVisibility(View.VISIBLE);
-            dialog.dismiss();
-            goToGraphicalResult(treeName, uploadedQSFileUUID);
-        });
-
-        dialog.show();
-    }
-
-    private void goToTextResult(String treeName, String uploadedQSFileUUID) {
-        EPAngServiceAPI.getInstance().runAnalysisWithTextResult(treeName, uploadedQSFileUUID, new RunAnalysisWithTextResultCallback() {
-            @Override
-            public void onSuccess(EPAngData data) {
-                Intent intent = new Intent(MainActivity.this, ShowTreeActivity.class);
-                Bundle bundle = new Bundle();
-                bundle.putInt(ShowTreeActivity.TYPE_KEY, ShowTreeActivity.TEXT_RESULT_TYPE);
-                bundle.putParcelable(ShowTreeActivity.EPA_DATA_KEY, data);
-                intent.putExtras(bundle);
-
-                loadingRelativeLayout.setVisibility(View.INVISIBLE);
-                MainActivity.this.startActivity(intent);
-            }
-
-            @Override
-            public void onError(Throwable throwable) {
-                loadingRelativeLayout.setVisibility(View.INVISIBLE);
-                Toast.makeText(MainActivity.this, throwable.getMessage(), Toast.LENGTH_SHORT).show();
-            }
-        });
-    }
-
-    private void goToGraphicalResult(String treeName, String uploadedQSFileUUID) {
-        EPAngServiceAPI.getInstance().runAnalysisWithGraphicResult(treeName, uploadedQSFileUUID,
-                new RunAnalysisWithGraphicResultCallback() {
+        EPAngServiceAPI.getInstance().runAnalysisWithTextResult(treeName, uploadedQSFileUUID,
+                new RunAnalysisWithTextResultCallback() {
                     @Override
-                    public void onSuccess(Bitmap bitmap) {
-                        Intent intent = new Intent(MainActivity.this, ShowTreeActivity.class);
+                    public void onSuccess(EPAngData data) {
+                        Intent intent = new Intent(MainActivity.this, ShowResultsActivity.class);
                         Bundle bundle = new Bundle();
-                        bundle.putInt(ShowTreeActivity.TYPE_KEY, ShowTreeActivity.GRAPHICAL_RESULT_TYPE);
-                        addBitmapToBundle(bundle, bitmap);
+                        bundle.putString(ShowResultsActivity.TREE_NAME_KEY, treeName);
+                        bundle.putString(ShowResultsActivity.QS_TOKEN_KEY, uploadedQSFileUUID);
                         intent.putExtras(bundle);
-
                         loadingRelativeLayout.setVisibility(View.INVISIBLE);
                         MainActivity.this.startActivity(intent);
                     }
@@ -302,6 +255,33 @@ public class MainActivity extends BaseActivity {
                         Toast.makeText(MainActivity.this, throwable.getMessage(), Toast.LENGTH_SHORT).show();
                     }
                 });
+    }
+
+    public boolean isStoragePermissionGranted() {
+        if (Build.VERSION.SDK_INT >= 23) {
+            if (checkSelfPermission(android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                    == PackageManager.PERMISSION_GRANTED) {
+                Log.v("TAG", "Permission is granted");
+                return true;
+            } else {
+
+                Log.v("TAG", "Permission is revoked");
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
+                return false;
+            }
+        } else { //permission is automatically granted on sdk<23 upon installation
+            Log.v("TAG", "Permission is granted");
+            return true;
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            Log.v("TAG", "Permission: " + permissions[0] + "was " + grantResults[0]);
+            //resume tasks needing this permission
+        }
     }
 
 }
